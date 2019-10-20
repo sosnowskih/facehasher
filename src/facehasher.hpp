@@ -6,6 +6,9 @@
  * 
  */
 
+#ifndef _FACEHASHER_HPP_
+#define _FACEHASHER_HPP_
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -24,3 +27,4 @@ using std::getline;
 using std::istringstream;
 using std::find; 
 
+#endif

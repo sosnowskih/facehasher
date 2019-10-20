@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <sstream>
 
-#include "notarization.cpp"
+#include "facehasher.hpp"
 
 using std::cout;
 using std::cin;

@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <sstream>
 
-#include "image_capture.cpp"
+#include "facehasher.hpp"
 
 using std::cout;
 using std::cin;
