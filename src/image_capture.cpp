@@ -7,20 +7,42 @@
  */
 
 #include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <sstream>
-
+#include <opencv2/opencv.hpp>
+#include <filesystem>
 #include "facehasher.hpp"
 
-using std::cout;
-using std::cin;
-using std::endl;
-using std::vector;
-using std::string;
-using std::noskipws;
-using std::getline;
-using std::istringstream;
-using std::find; 
+bool image_capture()
+{
+	char key;
+	cv::VideoCapture cap(0);
 
+	if (!cap.isOpened())
+	{
+		std::cout << "Error: Cannot open camera.";
+		return false;
+	}
+
+	std::cout << "Press 'c' to capture an image.  Press 'q' to quit." << std::endl;
+
+	cv::Mat frame;
+	cv::namedWindow("Capture", cv::WINDOW_AUTOSIZE);
+	while (true)
+	{
+		cap >> frame;
+		cv::imshow("Capture", frame);
+
+		key = cv::waitKey(30);
+
+		if (key == 'c')
+		{
+			cv::imwrite("image.jpg", frame);
+			std::cout << "Image captured." << std::endl;
+		}
+		if (key == 'q')
+		{
+			break;
+		}
+	}
+
+	return true;
+}
