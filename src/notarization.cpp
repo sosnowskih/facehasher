@@ -38,6 +38,9 @@ using std::this_thread;
 using std::chrono;
 
 vector<string> consoleCmd(const string &input);
+void timer_start(function<void(void)> func, unsigned int interval);
+vector<string> syncRick();
+vector<string> rickGetInfo();
 
 int main() {
 
@@ -101,14 +104,46 @@ void timer_start(function<void(void)> func, unsigned int interval) {
     thread([func, interval]() {
         while (true)
         {
+            string cmd = input;
+            string data; 
+            FILE * stream;
+            const int max_buffer = 256;
+            char buffer[max_buffer];
+            cmd.append(" 2>&1");
+
+            stream = popen(cmd.c_str(), "r");
+
+            if (stream) {
+                while (!feof(stream)) {
+                    if (fgets(buffer, max_buffer, stream) != NULL)
+                        data.append(buffer); 
+                }
+                pclose(stream);
+            }
             func();
             this_thread::sleep_for(chrono::milliseconds(interval));
         }
     }).detach();
 }
 
+bool syncRick() { 
+    string cmd = "curl --user $rpcuser:$rpcpassword --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:$rpcport/ | jq '.[0] | {blocks: .blocks}'"; 
+
+    thread([consoleCmd, 5000]() {
+
+        while (true) {
+
+            if (res == true) {
+                break;
+            }
+        }
+    }
+
+    return true;
+}
+
 vector<string> rickGetInfo() {
-    string cmd = "curl --user $rpcuser:$rpcpassword --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:$rpcport/";
+    string cmd = "curl --user $rpcuser:$rpcpassword --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:$rpcport/ | jq '.[0] | {blocks: .blocks}'"; 
     string data; 
     FILE * stream;
     const int max_buffer = 256;
