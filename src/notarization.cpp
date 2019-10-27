@@ -23,6 +23,7 @@
 #include <jsoncpp/json/reader.h>
 #include <jsoncpp/json/writer.h>
 #include <jsoncpp/json/value.h>
+#include <ctime>
 
 // #include "facehasher.hpp"
 
@@ -39,6 +40,7 @@ using std::find;
 using std::ifstream;
 using std::function;
 using std::thread;
+using std::time_t;
 
 vector<string> consoleCmd(const string &input, bool bifurcate);
 void timer_start(function<void(void)> func, unsigned int interval);
@@ -61,7 +63,7 @@ int main() {
         // cout << "loadRickRes: " << str << endl;
 
     // Test sync rick chain
-    string getInfoCmd = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/ | jq '. | {synced: .result.synced}'"; 
+    string getInfoCmd = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/ | jq '.'"; 
     vector<string> syncRes = consoleCmd(getInfoCmd, false);
     cout << syncRes[0] << endl;
 
@@ -85,18 +87,42 @@ int main() {
         return 0;
     }
 
-    cout << json.get("synced", "default value").asString() << endl;
+    cout << json["result"].get("synced", "default value").asString() << endl;
+
+    time_t t = std::time(0);
+    string key = std::to_string(t);
+
+    cout << key << endl;
+
+    string updateKey = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"kvupdate\", \"params\": [\"";
+    updateKey = updateKey + key + "\", \"" + sumVec[0] + "\", \"2\"] }' -H 'content-type: text/plain;' http://127.0.0.1:25435"; 
+    cout << "updateKey: " << updateKey << endl;
+
+    vector<string> sendKey = consoleCmd(updateKey, false); 
     
-    // Launch RICK chain
-    // string launchRick = "/home/$USER/komodo/src/komodod -pubkey=$pubkey -ac_name=RICK -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -ac_staked=10 -addnode=95.217.44.58 -addnode=138.201.136.145 &";
-    // vector<string> rickLaunchRes = consoleCmd(launchRick); 
+    Json::CharReaderBuilder builder2;
+    Json::CharReader* reader2 = builder2.newCharReader();
 
-    // while (true) {
-        
-        // if (res == "finished")
-            // break;
-    // }
+    Json::Value json2;
+    string errors2;
 
+    bool parsingSuccessful2 = reader2 -> parse(
+            sendKey[0].c_str(),
+            sendKey[0].c_str() + sendKey[0].size(),
+            &json2,
+            &errors2
+    );
+    delete reader2;
+
+    if (!parsingSuccessful2) {
+        cout << "Failed to parse the JSON, errors: " << endl;
+        cout << errors2 << endl;
+        return 0;
+    }
+
+    cout << "key: " << json2["result"].get("key", "default value").asString() << endl;
+    cout << "value: " << json2["result"].get("value", "default value").asString() << endl;
+    cout << "txid: " << json2["result"].get("txid", "default value").asString() << endl;
     return 0;
 }
 
@@ -151,7 +177,7 @@ void timer_start(function<void(void)> func, unsigned int interval) {
 }
 
 bool syncRick() { 
-    string cmd = "curl --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/"; 
+    string cmd = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/"; 
 
     // thread([consoleCmd, 5000]()) { 
         // while (true) { 
@@ -166,7 +192,7 @@ bool syncRick() {
 }
 
 vector<string> rickGetInfo() {
-    string cmd = "curl --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/"; 
+    string cmd = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/"; 
     string data; 
     FILE * stream;
     const int max_buffer = 256;
