@@ -61,18 +61,31 @@ int main() {
         // cout << "loadRickRes: " << str << endl;
 
     // Test sync rick chain
-    string getInfoCmd = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/ | jq '. | {result: .result}'"; 
+    string getInfoCmd = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/ | jq '. | {synced: .result.synced}'"; 
     vector<string> syncRes = consoleCmd(getInfoCmd, false);
     cout << syncRes[0] << endl;
 
-    Json::Value root;
-    Json::Reader reader;
-    bool parsingSuccessful = reader.parse(syncRes[0].c_str(), root );
+    Json::CharReaderBuilder builder;
+    Json::CharReader* reader = builder.newCharReader();
+
+    Json::Value json;
+    string errors;
+
+    bool parsingSuccessful = reader -> parse(
+            syncRes[0].c_str(),
+            syncRes[0].c_str() + syncRes[0].size(),
+            &json,
+            &errors
+    );
+    delete reader;
+
     if (!parsingSuccessful) {
-        cout << "Failed to parse" << reader.getFormattedErrorMessages();
+        cout << "Failed to parse the JSON, errors: " << endl;
+        cout << errors << endl;
         return 0;
     }
-    cout << root.get("result.synced", "false").asString() << endl; 
+
+    cout << json.get("synced", "default value").asString() << endl;
     
     // Launch RICK chain
     // string launchRick = "/home/$USER/komodo/src/komodod -pubkey=$pubkey -ac_name=RICK -ac_supply=90000000000 -ac_reward=100000000 -ac_cc=3 -ac_staked=10 -addnode=95.217.44.58 -addnode=138.201.136.145 &";
