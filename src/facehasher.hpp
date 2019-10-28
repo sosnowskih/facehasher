@@ -14,8 +14,21 @@
 #include <vector>
 #include <algorithm>
 #include <sstream>
-
-#include "gui.cpp"
+#include <fstream>
+#include <bits/stdc++.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <chrono>
+#include <thread>
+#include <functional>
+#include <curl/curl.h>
+#include <jsoncpp/json/json.h>
+#include <jsoncpp/json/reader.h>
+#include <jsoncpp/json/writer.h>
+#include <jsoncpp/json/value.h>
+#include <ctime>
+#include <opencv2/opencv.hpp>
+#include <filesystem>
 
 using std::cout;
 using std::cin;
@@ -25,6 +38,19 @@ using std::string;
 using std::noskipws;
 using std::getline;
 using std::istringstream;
+using std::ostringstream;
 using std::find; 
+using std::ifstream;
+using std::function;
+using std::thread;
+using std::time_t;
+using std::setw;
+using std::left;
+using std::right;
+
+vector<string> consoleCmd(const string &input, bool bifurcate);
+vector<string> createHash(string &filename);
+vector<string> createKVStore(const vector<string> & sumVec);
+Json::Value convertVecToJson(const vector<string> & input);
 
 #endif
