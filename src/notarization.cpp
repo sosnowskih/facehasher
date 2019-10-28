@@ -67,6 +67,10 @@ int main() {
     // Convert the kvStore value to a Json::Value object for parsing 
     Json::Value jsonKVStore = convertVecToJson(kvStore);
 
+    // Test that json values were properly converted, and if not, end program
+    if (jsonKVStore.size() < 4)
+        return 0;
+
     // To display returned values, create vector to store names of values
     vector<string> valNames {"key", "value", "txid", "height"};
 
@@ -87,6 +91,7 @@ int main() {
         jsonKVStore["result"].get(valNames[i], "default value").asString() << endl;
 
     }
+
     return 0;
 }
 
@@ -97,33 +102,49 @@ vector<string> createHash(string &filename) {
     // Add filename to the sha256sum command
     cmd = cmd + filename; 
 
+    // Send the complete command to the console for processing
+    // Indicate via bool that response string should be bifurcated into separate values
+    // This keeps the hash value separate from the name of the file in the response from the sha256 command
     vector<string> sumVec = consoleCmd(cmd, true); 
 
+    // Return result
     return sumVec;
 }
 
 Json::Value convertVecToJson(const vector<string> & input) { 
     
+    // Delcare json reader and builders for processing
     Json::CharReaderBuilder builder;
     Json::CharReader* reader = builder.newCharReader();
 
+    // Declare final json value to be returned
     Json::Value json;
+    
+    // Declare string to hold errors
     string errors;
 
+    // Declare bool variable to test if parse is succesful
+    // Pass into parse() function the first element in the input vector
+    // This element holds the result from the call to the blockchain
+    // Also pass in the json variable and errors variable
     bool parsingSuccessful = reader -> parse(
             input[0].c_str(),
             input[0].c_str() + input[0].size(),
             &json,
             &errors
     );
+
+    // Clean up pointer
     delete reader;
 
+    // Test if parsing was successful, and if not, print to console
     if (!parsingSuccessful) {
         cout << "Failed to parse the JSON, errors: " << endl;
         cout << errors << endl;
-        return 0;
+        return json;
     }
 
+    // If successful, return json values
     return json;
 }
 
