@@ -43,51 +43,17 @@ using std::thread;
 using std::time_t;
 
 vector<string> consoleCmd(const string &input, bool bifurcate);
-void timer_start(function<void(void)> func, unsigned int interval);
-bool syncRick();
-vector<string> rickGetInfo();
+vector<string> createHash(string &filename);
 
 int main() {
 
-    // Get the sha256sum of the image 
-    string filename = "kulning.jpg"; 
-    string cmd = "sha256sum ";
-    cmd = cmd + filename; 
-    vector<string> sumVec = consoleCmd(cmd, true); 
-    cout << filename << " " << "hash: " << sumVec[0] << endl;
+    // Choose file name that is hashed by default
+    string filename = "kulning.jpg";
 
-    // Load credentials as environment variables
-    // string loadRickCreds = "cat /home/siddhartha/.komodo/RICK/RICK.conf";
-    // vector<string> loadRickRes = consoleCmd(loadRickCreds);
-    // for (auto str: loadRickRes)
-        // cout << "loadRickRes: " << str << endl;
+    // Create vector to hold file hash
+    vector<string> sumVec = createHash(filename);
 
-    // Test sync rick chain
-    string getInfoCmd = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/ | jq '.'"; 
-    vector<string> syncRes = consoleCmd(getInfoCmd, false);
-    cout << syncRes[0] << endl;
-
-    Json::CharReaderBuilder builder;
-    Json::CharReader* reader = builder.newCharReader();
-
-    Json::Value json;
-    string errors;
-
-    bool parsingSuccessful = reader -> parse(
-            syncRes[0].c_str(),
-            syncRes[0].c_str() + syncRes[0].size(),
-            &json,
-            &errors
-    );
-    delete reader;
-
-    if (!parsingSuccessful) {
-        cout << "Failed to parse the JSON, errors: " << endl;
-        cout << errors << endl;
-        return 0;
-    }
-
-    cout << json["result"].get("synced", "default value").asString() << endl;
+    // 
 
     time_t t = std::time(0);
     string key = std::to_string(t);
@@ -124,6 +90,20 @@ int main() {
     cout << "value: " << json2["result"].get("value", "default value").asString() << endl;
     cout << "txid: " << json2["result"].get("txid", "default value").asString() << endl;
     return 0;
+}
+
+vector<string> createHash(string &filename) { 
+    // Initiate the string that holds the sha256sum command to run in the terminal
+    string cmd = "sha256sum ";
+
+    // Add filename to the sha256sum command
+    cmd = cmd + filename; 
+
+
+    vector<string> sumVec = consoleCmd(cmd, true); 
+    cout << filename << " " << "hash: " << sumVec[0] << endl;
+
+    return sumVec;
 }
 
 vector<string> consoleCmd(const string &input, bool bifurcate) {
@@ -166,57 +146,3 @@ vector<string> consoleCmd(const string &input, bool bifurcate) {
     return res; 
 }
 
-void timer_start(function<void(void)> func, unsigned int interval) {
-    // thread([func, interval]() {
-        // while (true)
-        // {
-            // func();
-            // std::this_thread::sleep_for(std::chrono::milliseconds(interval));
-        // }
-    // }).detach();
-}
-
-bool syncRick() { 
-    string cmd = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/"; 
-
-    // thread([consoleCmd, 5000]()) { 
-        // while (true) { 
-            // consoleCmd(cmd);
-            // if (res == true) {
-                // break;
-            // }
-        // }
-    // }
-
-    return true;
-}
-
-vector<string> rickGetInfo() {
-    string cmd = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getinfo\", \"params\": [] }' -H 'content-type: text/plain;' http://127.0.0.1:25435/"; 
-    string data; 
-    FILE * stream;
-    const int max_buffer = 256;
-    char buffer[max_buffer];
-    cmd.append(" 2>&1");
-
-    stream = popen(cmd.c_str(), "r");
-
-    if (stream) {
-        while (!feof(stream)) {
-            if (fgets(buffer, max_buffer, stream) != NULL)
-                data.append(buffer); 
-        }
-        pclose(stream);
-    }
-
-    istringstream instream(data); 
-    vector<string> res; 
-
-    while (!instream.eof()) { 
-        string temp;
-        instream >> temp;
-        res.push_back(temp); 
-    }
-
-    return res;   
-}
