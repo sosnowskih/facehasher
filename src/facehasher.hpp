@@ -27,6 +27,8 @@
 #include <jsoncpp/json/writer.h>
 #include <jsoncpp/json/value.h>
 #include <ctime>
+#include <opencv2/opencv.hpp>
+#include <filesystem>
 
 using std::cout;
 using std::cin;
