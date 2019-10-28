@@ -71,30 +71,16 @@ int main() {
     if (jsonKVStore.size() < 4)
         return 0;
 
-    // To display returned values, create vector to store names of values
-    vector<string> valNames {"key", "value", "txid", "height"};
-
-    // Display returned values
-    for (int i = 0; i < 4; i++) {
-        // Set preferences for left side of console printout
-        cout << setw(20);
-        cout << left;
-        
-        // Print value name
-        cout << valNames[i] << ": ";
-
-        // Set preference for right side of console printout
-        cout << setw(30);
-        cout << right;
-
-        // Print value
-        jsonKVStore["result"].get(valNames[i], "default value").asString() << endl;
-
-    }
+    // Print json values to console
+    cout << "key: " << jsonKVStore["result"].get("key", "default value").asString() << endl;
+    cout << "value: " << jsonKVStore["result"].get("value", "default value").asString() << endl;
+    cout << "txid: " << jsonKVStore["result"].get("txid", "default value").asString() << endl;
+    cout << "height: " << jsonKVStore["result"].get("height", "default value").asString() << endl;
 
     return 0;
 }
 
+// Create a sha256sum hash of a file, from a provided filename
 vector<string> createHash(string &filename) { 
     // Initiate the string that holds the sha256sum command to run in the terminal
     string cmd = "sha256sum ";
@@ -111,6 +97,7 @@ vector<string> createHash(string &filename) {
     return sumVec;
 }
 
+// Convert a vector to a json object
 Json::Value convertVecToJson(const vector<string> & input) { 
     
     // Delcare json reader and builders for processing
@@ -141,58 +128,85 @@ Json::Value convertVecToJson(const vector<string> & input) {
     if (!parsingSuccessful) {
         cout << "Failed to parse the JSON, errors: " << endl;
         cout << errors << endl;
-        return json;
     }
 
-    // If successful, return json values
+    // Return json values
+    // Or empty vector
     return json;
 }
 
+// Send a hash to the RICK blockchain for decentralized storage
 vector<string> createKVStore(const vector<string> & sumVec) {
 
+    // Create a timestamp in string form
+    // This acts as the key value
     time_t t = std::time(0);
     string key = std::to_string(t);
 
+    // Create the full curl command to execute in the terminal
     string updateKey = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"kvupdate\", \"params\": [\"" + key + "\", \"" + sumVec[0] + "\", \"2\"] }' -H 'content-type: text/plain;' http://127.0.0.1:25435"; 
 
+    // Send string command to consoleCmd() function to process
+    // Store returned vector as sendKey
     vector<string> sendKey = consoleCmd(updateKey, false); 
 
     return sendKey; 
 }
 
+// Execute a command in the Unix terminal, from a provided string
+// If necessary, cut the returned string response into separate elements in the to-be-returned vector
 vector<string> consoleCmd(const string &input, bool bifurcate) {
 
     // Reference to this tutorial
     // https://www.jeremymorgan.com/tutorials/c-programming/how-to-capture-the-output-of-a-linux-command-in-c/
 
+    // Create string to hold command after adjustments
     string cmd = input;
+
+    // Create string to hold returned data
     string data; 
+
+    // Create file stream and pointer
     FILE * stream;
+
+    // Declare max buffer size
     const int max_buffer = 256;
+
+    // Create buffer array of char type
     char buffer[max_buffer];
 
+    // If bifurcate == true, instruct the console to store all values in the "1" variable in bash terminal
     if (bifurcate)
         cmd.append(" 2>&1");
 
-    // cout << "Executing: " << cmd << endl;
+    // Execute the command as a c string, using popen()
     stream = popen(cmd.c_str(), "r");
 
+    // If there is a positive returned response
+    // Push this response into the data variable
     if (stream) {
         while (!feof(stream)) {
             if (fgets(buffer, max_buffer, stream) != NULL)
                 data.append(buffer); 
         }
+
+        // End the shell process
         pclose(stream);
     }
 
+    // Declare a stream and a vector to hold final values
     istringstream instream(data); 
     vector<string> res; 
+
+    // If bifurcating result, use the stream to separate each input and push into res
     if (bifurcate) { 
         while (!instream.eof()) { 
             string temp;
             instream >> temp;
             res.push_back(temp); 
         }
+
+    // Otherwise, push the entire response into the first element of the res vector
     } else {
         res.push_back(data);
     }
