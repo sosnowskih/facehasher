@@ -15,8 +15,6 @@
 #include <algorithm>
 #include <sstream>
 
-#include "gui.cpp"
-
 using std::cout;
 using std::cin;
 using std::endl;

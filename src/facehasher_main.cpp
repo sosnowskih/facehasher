@@ -11,10 +11,21 @@
 #include <vector>
 #include <algorithm>
 #include <sstream>
-#include <experimental/filesystem>
-#include cp = <childprocess>
+#include <fstream>
+#include <bits/stdc++.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <chrono>
+#include <thread>
+#include <functional>
+#include <curl/curl.h>
+#include <jsoncpp/json/json.h>
+#include <jsoncpp/json/reader.h>
+#include <jsoncpp/json/writer.h>
+#include <jsoncpp/json/value.h>
+#include <ctime>
 
-// #include "facehasher.hpp"
+#include "facehasher.hpp"
 
 using std::cout;
 using std::cin;
@@ -24,22 +35,42 @@ using std::string;
 using std::noskipws;
 using std::getline;
 using std::istringstream;
+using std::ostringstream;
 using std::find; 
-namespace fs = std::experimental::filesystem;
+using std::ifstream;
+using std::function;
+using std::thread;
+using std::time_t;
+using std::setw;
+using std::left;
+using std::right;
 
 int main(int argv, char **argc) {
+    // Choose file name that is hashed by default
+    string filename = "kulning.jpg";
 
-	cout << "Current path is " << fs::current_path() << endl;
+    // Create vector to hold file hash
+    vector<string> sumVec = createHash(filename);
 
-	cp.exec("./komodod -ac_name=RICK", res, err) {
-		isLaunched = listen(getinfo == true);
-	}
+    // Print hash to console
+    cout << filename << " " << "hash: " << sumVec[0] << endl;
 
-	string facehashed;
-	cp.exec("curl --user $rpcuser:$rpcpassword --data-binary '{"jsonrpc": "1.0", "id":"curltest", "method": "kvupdate", "params": ["examplekey", "examplevalue", "2", "examplepassphrase"] }' -H 'content-type: text/plain;' http://127.0.0.1:9801", res, err) {
-		facehashed = res[0];
+    // Obtain the kvStore response as a string
+    vector<string> kvStore = createKVStore(sumVec);
 
-	}
+    // Convert the kvStore value to a Json::Value object for parsing 
+    Json::Value jsonKVStore = convertVecToJson(kvStore);
 
-	guiProgram.displayFaceHash(facehashed);
+    // Test that json values were properly converted, and if not, end program
+    if (jsonKVStore.size() < 4)
+        return 0;
+
+    // Print json values to console
+    cout << "key: " << jsonKVStore["result"].get("key", "default value").asString() << endl;
+    cout << "value: " << jsonKVStore["result"].get("value", "default value").asString() << endl;
+    cout << "txid: " << jsonKVStore["result"].get("txid", "default value").asString() << endl;
+    cout << "height: " << jsonKVStore["result"].get("height", "default value").asString() << endl;
+
+    return 0;
 }
+
