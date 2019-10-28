@@ -41,9 +41,14 @@ using std::ifstream;
 using std::function;
 using std::thread;
 using std::time_t;
+using std::setw;
+using std::left;
+using std::right;
 
 vector<string> consoleCmd(const string &input, bool bifurcate);
 vector<string> createHash(string &filename);
+vector<string> createKVStore(const vector<string> & sumVec);
+Json::Value convertVecToJson(const vector<string> & input);
 
 int main() {
 
@@ -53,42 +58,35 @@ int main() {
     // Create vector to hold file hash
     vector<string> sumVec = createHash(filename);
 
-    // 
+    // Print hash to console
+    cout << filename << " " << "hash: " << sumVec[0] << endl;
 
-    time_t t = std::time(0);
-    string key = std::to_string(t);
+    // Obtain the kvStore response as a string
+    vector<string> kvStore = createKVStore(sumVec);
 
-    cout << key << endl;
+    // Convert the kvStore value to a Json::Value object for parsing 
+    Json::Value jsonKVStore = convertVecToJson(kvStore);
 
-    string updateKey = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"kvupdate\", \"params\": [\"";
-    updateKey = updateKey + key + "\", \"" + sumVec[0] + "\", \"2\"] }' -H 'content-type: text/plain;' http://127.0.0.1:25435"; 
-    cout << "updateKey: " << updateKey << endl;
+    // To display returned values, create vector to store names of values
+    vector<string> valNames {"key", "value", "txid", "height"};
 
-    vector<string> sendKey = consoleCmd(updateKey, false); 
-    
-    Json::CharReaderBuilder builder2;
-    Json::CharReader* reader2 = builder2.newCharReader();
+    // Display returned values
+    for (int i = 0; i < 4; i++) {
+        // Set preferences for left side of console printout
+        cout << setw(20);
+        cout << left;
+        
+        // Print value name
+        cout << valNames[i] << ": ";
 
-    Json::Value json2;
-    string errors2;
+        // Set preference for right side of console printout
+        cout << setw(30);
+        cout << right;
 
-    bool parsingSuccessful2 = reader2 -> parse(
-            sendKey[0].c_str(),
-            sendKey[0].c_str() + sendKey[0].size(),
-            &json2,
-            &errors2
-    );
-    delete reader2;
+        // Print value
+        jsonKVStore["result"].get(valNames[i], "default value").asString() << endl;
 
-    if (!parsingSuccessful2) {
-        cout << "Failed to parse the JSON, errors: " << endl;
-        cout << errors2 << endl;
-        return 0;
     }
-
-    cout << "key: " << json2["result"].get("key", "default value").asString() << endl;
-    cout << "value: " << json2["result"].get("value", "default value").asString() << endl;
-    cout << "txid: " << json2["result"].get("txid", "default value").asString() << endl;
     return 0;
 }
 
@@ -99,11 +97,46 @@ vector<string> createHash(string &filename) {
     // Add filename to the sha256sum command
     cmd = cmd + filename; 
 
-
     vector<string> sumVec = consoleCmd(cmd, true); 
-    cout << filename << " " << "hash: " << sumVec[0] << endl;
 
     return sumVec;
+}
+
+Json::Value convertVecToJson(const vector<string> & input) { 
+    
+    Json::CharReaderBuilder builder;
+    Json::CharReader* reader = builder.newCharReader();
+
+    Json::Value json;
+    string errors;
+
+    bool parsingSuccessful = reader -> parse(
+            input[0].c_str(),
+            input[0].c_str() + input[0].size(),
+            &json,
+            &errors
+    );
+    delete reader;
+
+    if (!parsingSuccessful) {
+        cout << "Failed to parse the JSON, errors: " << endl;
+        cout << errors << endl;
+        return 0;
+    }
+
+    return json;
+}
+
+vector<string> createKVStore(const vector<string> & sumVec) {
+
+    time_t t = std::time(0);
+    string key = std::to_string(t);
+
+    string updateKey = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"kvupdate\", \"params\": [\"" + key + "\", \"" + sumVec[0] + "\", \"2\"] }' -H 'content-type: text/plain;' http://127.0.0.1:25435"; 
+
+    vector<string> sendKey = consoleCmd(updateKey, false); 
+
+    return sendKey; 
 }
 
 vector<string> consoleCmd(const string &input, bool bifurcate) {
