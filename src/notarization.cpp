@@ -25,7 +25,7 @@
 #include <jsoncpp/json/value.h>
 #include <ctime>
 
-// #include "facehasher.hpp"
+#include "facehasher.hpp"
 
 using std::cout;
 using std::cin;
@@ -44,41 +44,6 @@ using std::time_t;
 using std::setw;
 using std::left;
 using std::right;
-
-vector<string> consoleCmd(const string &input, bool bifurcate);
-vector<string> createHash(string &filename);
-vector<string> createKVStore(const vector<string> & sumVec);
-Json::Value convertVecToJson(const vector<string> & input);
-
-int main() {
-
-    // Choose file name that is hashed by default
-    string filename = "kulning.jpg";
-
-    // Create vector to hold file hash
-    vector<string> sumVec = createHash(filename);
-
-    // Print hash to console
-    cout << filename << " " << "hash: " << sumVec[0] << endl;
-
-    // Obtain the kvStore response as a string
-    vector<string> kvStore = createKVStore(sumVec);
-
-    // Convert the kvStore value to a Json::Value object for parsing 
-    Json::Value jsonKVStore = convertVecToJson(kvStore);
-
-    // Test that json values were properly converted, and if not, end program
-    if (jsonKVStore.size() < 4)
-        return 0;
-
-    // Print json values to console
-    cout << "key: " << jsonKVStore["result"].get("key", "default value").asString() << endl;
-    cout << "value: " << jsonKVStore["result"].get("value", "default value").asString() << endl;
-    cout << "txid: " << jsonKVStore["result"].get("txid", "default value").asString() << endl;
-    cout << "height: " << jsonKVStore["result"].get("height", "default value").asString() << endl;
-
-    return 0;
-}
 
 // Create a sha256sum hash of a file, from a provided filename
 vector<string> createHash(string &filename) { 
