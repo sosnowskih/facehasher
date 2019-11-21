@@ -28,7 +28,10 @@
 #include <jsoncpp/json/value.h>
 #include <ctime>
 #include <opencv2/opencv.hpp>
+
+/*
 #include <filesystem>
+*/
 
 using std::cout;
 using std::cin;
@@ -52,5 +55,6 @@ vector<string> consoleCmd(const string &input, bool bifurcate);
 vector<string> createHash(string &filename);
 vector<string> createKVStore(const vector<string> & sumVec);
 Json::Value convertVecToJson(const vector<string> & input);
+void image_capture();
 
 #endif

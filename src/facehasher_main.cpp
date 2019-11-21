@@ -46,6 +46,7 @@ using std::left;
 using std::right;
 
 int main(int argv, char **argc) {
+	/*
     // Choose file name that is hashed by default
     string filename = "kulning.jpg";
 
@@ -72,5 +73,11 @@ int main(int argv, char **argc) {
     cout << "height: " << jsonKVStore["result"].get("height", "default value").asString() << endl;
 
     return 0;
+    */
+
+	image_capture();
+
+	return 0;
+
 }
 
