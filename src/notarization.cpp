@@ -144,9 +144,18 @@ vector<string> consoleCmd(const string &input, bool bifurcate) {
     if (bifurcate)
         cmd.append(" 2>&1");
 
+    //
+#ifdef _WIN32
+
+    // Execute the command as a c string, using popen()
+    stream = _popen(cmd.c_str(), "r");
+
+#elif __unix__
+
     // Execute the command as a c string, using popen()
     stream = popen(cmd.c_str(), "r");
 
+#endif
     // If there is a positive returned response
     // Push this response into the data variable
     if (stream) {
@@ -155,9 +164,18 @@ vector<string> consoleCmd(const string &input, bool bifurcate) {
                 data.append(buffer); 
         }
 
+#ifdef _WIN32 
+        // End the shell process
+        _pclose(stream);
+    }
+
+#elif __unix__ 
+
         // End the shell process
         pclose(stream);
     }
+
+#endif
 
     // Declare a stream and a vector to hold final values
     istringstream instream(data); 
@@ -175,6 +193,7 @@ vector<string> consoleCmd(const string &input, bool bifurcate) {
     } else {
         res.push_back(data);
     }
+
 
     return res; 
 }
