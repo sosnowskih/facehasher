@@ -66,7 +66,6 @@ int main(int argv, char **argc) {
 
 	// Test that json values were properly converted, and if not, end program
 	if (jsonKVStore.size() < 4)
-	return 0;
 
 	// Print json values to console
 	cout << "key: " << jsonKVStore["result"].get("key", "default value").asString() << endl;
