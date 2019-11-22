@@ -50,7 +50,7 @@ int main(int argv, char **argc) {
 	image_capture();
 
 	// Choose file name that is hashed by default
-	string filename = "../image.jpg";
+	string filename = "image.jpg";
 
 	// Create vector to hold file hash
 	vector<string> sumVec = createHash(filename);
