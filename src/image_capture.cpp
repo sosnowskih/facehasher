@@ -13,9 +13,7 @@
 
 //This function opens a new window with the computer's default camera settings and allows the user to save the current frame as a jpg.
 //It returns true if an image was saved or false if it failed to open the camera or was closed before a picture was taken.
-
 void image_capture()
-
 {
 	char key;
 	cv::VideoCapture cap(0);
@@ -40,7 +38,7 @@ void image_capture()
 		if (key > 0)
 		{
 			cv::imwrite("image.jpg", frame);
-
+			std::cout << "Image captured." << std::endl;
 			break;
 		}
 		if (key == 'q')
@@ -52,5 +50,4 @@ void image_capture()
 	cv::destroyWindow(windowName);
 
 	return;
-
 }

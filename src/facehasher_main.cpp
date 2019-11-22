@@ -46,31 +46,34 @@ using std::left;
 using std::right;
 
 int main(int argv, char **argc) {
-    // Choose file name that is hashed by default
-    string filename = "kulning.jpg";
 
-    // Create vector to hold file hash
-    vector<string> sumVec = createHash(filename);
+	image_capture();
 
-    // Print hash to console
-    cout << filename << " " << "hash: " << sumVec[0] << endl;
+	// Choose file name that is hashed by default
+	string filename = "image.jpg";
 
-    // Obtain the kvStore response as a string
-    vector<string> kvStore = createKVStore(sumVec);
+	// Create vector to hold file hash
+	vector<string> sumVec = createHash(filename);
 
-    // Convert the kvStore value to a Json::Value object for parsing 
-    Json::Value jsonKVStore = convertVecToJson(kvStore);
+	// Print hash to console
+	cout << filename << " " << "hash: " << sumVec[0] << endl;
 
-    // Test that json values were properly converted, and if not, end program
-    if (jsonKVStore.size() < 4)
-        return 0;
+	// Obtain the kvStore response as a string
+	vector<string> kvStore = createKVStore(sumVec);
 
-    // Print json values to console
-    cout << "key: " << jsonKVStore["result"].get("key", "default value").asString() << endl;
-    cout << "value: " << jsonKVStore["result"].get("value", "default value").asString() << endl;
-    cout << "txid: " << jsonKVStore["result"].get("txid", "default value").asString() << endl;
-    cout << "height: " << jsonKVStore["result"].get("height", "default value").asString() << endl;
+	// Convert the kvStore value to a Json::Value object for parsing 
+	Json::Value jsonKVStore = convertVecToJson(kvStore);
 
-    return 0;
+	// Test that json values were properly converted, and if not, end program
+	if (jsonKVStore.size() < 4)
+
+	// Print json values to console
+	cout << "key: " << jsonKVStore["result"].get("key", "default value").asString() << endl;
+	cout << "value: " << jsonKVStore["result"].get("value", "default value").asString() << endl;
+	cout << "txid: " << jsonKVStore["result"].get("txid", "default value").asString() << endl;
+	cout << "height: " << jsonKVStore["result"].get("height", "default value").asString() << endl;
+
+	return 0;
+
 }
 

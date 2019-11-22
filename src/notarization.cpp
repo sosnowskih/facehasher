@@ -109,7 +109,7 @@ vector<string> createKVStore(const vector<string> & sumVec) {
     string key = std::to_string(t);
 
     // Create the full curl command to execute in the terminal
-    string updateKey = "curl --silent --user user2570792372:pass00a0ab69baea20579d7dcf36ed9577969af32731e01b7651ab81c5496df4a12f64 --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"kvupdate\", \"params\": [\"" + key + "\", \"" + sumVec[0] + "\", \"2\"] }' -H 'content-type: text/plain;' http://127.0.0.1:25435"; 
+    string updateKey = "curl --silent --user user3789197396:passe6ba30ce2b58b085b63f739613aee3016766c6dc6daaf9e74b1a89adf47322627a --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"kvupdate\", \"params\": [\"" + key + "\", \"" + sumVec[0] + "\", \"2\"] }' -H 'content-type: text/plain;' http://127.0.0.1:25435"; 
 
     // Send string command to consoleCmd() function to process
     // Store returned vector as sendKey
@@ -144,9 +144,18 @@ vector<string> consoleCmd(const string &input, bool bifurcate) {
     if (bifurcate)
         cmd.append(" 2>&1");
 
+    //
+#ifdef _WIN32
+
+    // Execute the command as a c string, using popen()
+    stream = _popen(cmd.c_str(), "r");
+
+#elif __unix__
+
     // Execute the command as a c string, using popen()
     stream = popen(cmd.c_str(), "r");
 
+#endif
     // If there is a positive returned response
     // Push this response into the data variable
     if (stream) {
@@ -155,9 +164,18 @@ vector<string> consoleCmd(const string &input, bool bifurcate) {
                 data.append(buffer); 
         }
 
+#ifdef _WIN32 
+        // End the shell process
+        _pclose(stream);
+    }
+
+#elif __unix__ 
+
         // End the shell process
         pclose(stream);
     }
+
+#endif
 
     // Declare a stream and a vector to hold final values
     istringstream instream(data); 
@@ -175,6 +193,7 @@ vector<string> consoleCmd(const string &input, bool bifurcate) {
     } else {
         res.push_back(data);
     }
+
 
     return res; 
 }

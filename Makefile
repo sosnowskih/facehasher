@@ -4,8 +4,8 @@ HEADERS = $(wildcard src/*.h*)
 OBJECTS = $(SOURCES:%.cpp=%.o)
 LD = g++
 CXX = g++
-CXXFLAGS = -std=c++14 -g -Wall -Iinclude -DGL_SILENCE_DEPRECATION -ljsoncpp
-LDFLAGS = 
+CXXFLAGS = -std=c++14 -g -Wall -Iinclude -DGL_SILENCE_DEPRECATION 
+LDFLAGS = -ljsoncpp -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_video -lopencv_videoio -lopencv_videostab -lopencv_objdetect -lopencv_imgcodecs
 
 .PHONY: all clean
 
