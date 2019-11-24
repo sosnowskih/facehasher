@@ -21,7 +21,7 @@
 #include <chrono>
 #include <thread>
 #include <functional>
-#include <curl/curl.h>
+// #include <curl/curl.h>
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/reader.h>
 #include <jsoncpp/json/writer.h>
