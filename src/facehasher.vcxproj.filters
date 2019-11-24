@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="gui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="image_capture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="notarization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="facehasher_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
