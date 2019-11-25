@@ -12,7 +12,7 @@
 
 //This function opens a new window with the computer's default camera settings and allows the user to save the current frame as a jpg.
 //It returns true if an image was saved or false if it failed to open the camera.
-void image_capture()
+bool image_capture()
 {
 	//Attempt to open the camera using the computer's default camera settings
 	cv::VideoCapture cap(0);
@@ -21,7 +21,7 @@ void image_capture()
 	if (!cap.isOpened())
 	{
 		std::cout << "Error: Cannot open camera.";
-		return;
+		return false;
 	}
 
 	//The window name visible to the user
@@ -54,5 +54,5 @@ void image_capture()
 	//The window is destroyed upon completion.  Necessary for UI integration.
 	cv::destroyWindow(windowName);
 
-	return;
+	return true;
 }
