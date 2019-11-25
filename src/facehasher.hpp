@@ -15,20 +15,16 @@
 #include <algorithm>
 #include <sstream>
 #include <fstream>
-// #include <bits/stdc++.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <chrono>
 #include <thread>
 #include <functional>
-// #include <curl/curl.h>
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/reader.h>
 #include <jsoncpp/json/writer.h>
 #include <jsoncpp/json/value.h>
-// #include <ctime>
 #include <opencv2/opencv.hpp>
-// #include <filesystem>
 
 using std::cout;
 using std::cin;
@@ -42,16 +38,23 @@ using std::ostringstream;
 using std::find; 
 using std::ifstream;
 using std::function;
-// using std::thread;
-// using std::time_t;
 using std::setw;
 using std::left;
 using std::right;
 
+// Send a command to the console
 vector<string> consoleCmd(const string &input, bool bifurcate);
+
+// Create a sha256sum hash of a file
 vector<string> createHash(string &filename);
+
+// Create a KV store transaction and process it on the blockchain
 vector<string> createKVStore(const vector<string> & sumVec);
+
+// Request a json response from a software daemon
 Json::Value convertVecToJson(const vector<string> & input);
-bool image_capture();
+
+// Capture an image from a webcam
+void image_capture();
 
 #endif
