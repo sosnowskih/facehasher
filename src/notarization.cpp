@@ -12,18 +12,15 @@
 #include <algorithm>
 #include <sstream>
 #include <fstream>
-// #include <bits/stdc++.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <chrono>
 #include <thread>
 #include <functional>
-// #include <curl/curl.h>
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/reader.h>
 #include <jsoncpp/json/writer.h>
 #include <jsoncpp/json/value.h>
-// #include <ctime>
 
 #include "facehasher.hpp"
 
@@ -39,8 +36,6 @@ using std::ostringstream;
 using std::find; 
 using std::ifstream;
 using std::function;
-// using std::thread;
-// using std::time_t;
 using std::setw;
 using std::left;
 using std::right;
