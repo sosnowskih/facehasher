@@ -48,7 +48,16 @@ using std::right;
 // Create a sha256sum hash of a file, from a provided filename
 vector<string> createHash(string &filename) { 
     // Initiate the string that holds the sha256sum command to run in the terminal
-    string cmd = "sha256sum ";
+
+#ifdef _WIN32
+	
+    string cmd = "sha256sum.exe ";
+
+#elif __unix__
+	
+	string cmd = "sha256sum ";
+
+#endif
 
     // Add filename to the sha256sum command
     cmd = cmd + filename; 
