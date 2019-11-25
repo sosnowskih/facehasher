@@ -55,6 +55,6 @@ vector<string> createKVStore(const vector<string> & sumVec, bool& canContinue);
 Json::Value convertVecToJson(const vector<string> & input);
 
 // Capture an image from a webcam
-void image_capture(bool & cancontinue);
+void image_capture(bool & canContinue);
 
 #endif

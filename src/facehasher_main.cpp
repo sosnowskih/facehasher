@@ -76,27 +76,38 @@ int main(int argv, char **argc) {
 		return 0; 
 
 	// Print hash to console
-	cout << filename << " " << "hash: " << sumVec[0] << endl;
+	cout << endl << "Hash created successfully. The value is: " << sumVec[0] << endl;
+	cout << endl << "Storing the hash in the RICK blockchain for permanent safekeeping." << endl;
 
 	// Obtain the kvStore response as a string
 	vector<string> kvStore = createKVStore(sumVec, canContinue);
 
 	// Test if createKVStore performed successfully
-	if (!canContinue)
+	if (!canContinue) {
+		cout << "CreateKVStore func did not perform as expected" << endl;
 		return 0; 
+	}
 
 	// Convert the kvStore value to a Json::Value object for parsing 
 	Json::Value jsonKVStore = convertVecToJson(kvStore);
 
 	// Test that json values were properly converted, and if not, end program
-	if (jsonKVStore.size() < 4)
+	if (jsonKVStore.size() < 3) {
+		cout << endl << "jsonKVStore value is too small" << endl;
 		return 0;
+	}
 
 	// Print json values to console
+
+	cout << endl;
+	cout << "Congratulations, a hash proving your visual data is now permanently recorded in the RICK blockchain, and will reach the Bitcoin security service in twenty to thirty minutes." << endl;
+	cout << "Please save the image.jpg file found in the root directory of this project, as well as the following information: " << endl;
 	cout << "key: " << jsonKVStore["result"].get("key", "default value").asString() << endl;
 	cout << "value: " << jsonKVStore["result"].get("value", "default value").asString() << endl;
 	cout << "txid: " << jsonKVStore["result"].get("txid", "default value").asString() << endl;
 	cout << "height: " << jsonKVStore["result"].get("height", "default value").asString() << endl;
+
+	cout << endl << "Thank you." << endl;
 
 	waitForContinue();
 

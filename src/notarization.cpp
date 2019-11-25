@@ -62,6 +62,11 @@ vector<string> createHash(string &filename, bool& canContinue) {
     // This keeps the hash value separate from the name of the file in the response from the sha256 command
     vector<string> sumVec = consoleCmd(cmd, true); 
 
+    if (sumVec.size() < 1) {
+		cout << "Error in creating hash. Ensure that sha256sum software is running properly on your machine" << endl;
+		canContinue = false;
+    }
+
     // Return result
     return sumVec;
 }
@@ -118,6 +123,11 @@ vector<string> createKVStore(const vector<string> & sumVec, bool& canContinue) {
     // Send string command to consoleCmd() function to process
     // Store returned vector as sendKey
     vector<string> sendKey = consoleCmd(updateKey, false); 
+
+    if (sendKey.size() < 1) {
+	    canContinue = false;
+	    cout << "Error creating KV store transaction. Ensure the RICK asset chain is launched and synced." << endl; 
+    }
 
     return sendKey; 
 }
