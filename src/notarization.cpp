@@ -41,7 +41,7 @@ using std::left;
 using std::right;
 
 // Create a sha256sum hash of a file, from a provided filename
-vector<string> createHash(string &filename) { 
+vector<string> createHash(string &filename, bool& canContinue) { 
     // Initiate the string that holds the sha256sum command to run in the terminal
 
 #ifdef _WIN32
@@ -105,7 +105,7 @@ Json::Value convertVecToJson(const vector<string> & input) {
 }
 
 // Send a hash to the RICK blockchain for decentralized storage
-vector<string> createKVStore(const vector<string> & sumVec) {
+vector<string> createKVStore(const vector<string> & sumVec, bool& canContinue) {
 
     // Create a timestamp in string form
     // This acts as the key value

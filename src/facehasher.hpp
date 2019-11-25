@@ -46,10 +46,10 @@ using std::right;
 vector<string> consoleCmd(const string &input, bool bifurcate);
 
 // Create a sha256sum hash of a file
-vector<string> createHash(string &filename);
+vector<string> createHash(string &filename, bool& canContinue);
 
 // Create a KV store transaction and process it on the blockchain
-vector<string> createKVStore(const vector<string> & sumVec);
+vector<string> createKVStore(const vector<string> & sumVec, bool& canContinue);
 
 // Request a json response from a software daemon
 Json::Value convertVecToJson(const vector<string> & input);
